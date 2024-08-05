@@ -12,7 +12,7 @@
 
             return showSuffix ? $"{dblSByte:0.##}{suffix[i]}" : $"{dblSByte:0.##}";
         }
-        
+
         public static string FormatTime(TimeSpan time){
             double milliseconds = time.Milliseconds;
             double seconds = time.Seconds;
@@ -30,5 +30,16 @@
 
             return s;
         }
+
+        public static void GetSize(DirectoryInfo directory, ref long size){
+            foreach (DirectoryInfo childDirectory in directory.GetDirectories()){
+                GetSize(childDirectory, ref size);
+            }
+
+            foreach (FileInfo file in directory.GetFiles()){
+                size += file.Length;
+            }
+        }
+
     }
 }
