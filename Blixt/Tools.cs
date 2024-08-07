@@ -1,45 +1,44 @@
-﻿namespace Blixt{
-    public static class Tools{
-        public static string FormatBytes(long bytes, bool round = true, bool showSuffix = true){
-            string[] suffix =["B", "KB", "MB", "GB", "TB"];
-            int i;
-            double dblSByte = bytes;
-            for (i = 0; i < suffix.Length && bytes >= 1024; i++, bytes /= 1024){
-                dblSByte = bytes / 1024.0;
-            }
+﻿namespace Blixt;
 
-            if (round) dblSByte = Math.Round(dblSByte);
-
-            return showSuffix ? $"{dblSByte:0.##}{suffix[i]}" : $"{dblSByte:0.##}";
+public static class Tools{
+    public static string FormatBytes(long bytes, bool round = true, bool showSuffix = true){
+        string[] suffix =["B", "KB", "MB", "GB", "TB"];
+        int i;
+        double dblSByte = bytes;
+        for (i = 0; i < suffix.Length && bytes >= 1024; i++, bytes /= 1024){
+            dblSByte = bytes / 1024.0;
         }
 
-        public static string FormatTime(TimeSpan time){
-            double milliseconds = time.Milliseconds;
-            double seconds = time.Seconds;
-            double minutes = time.Minutes;
+        if (round) dblSByte = Math.Round(dblSByte);
 
-            string s = "";
+        return showSuffix ? $"{dblSByte:0.##}{suffix[i]}" : $"{dblSByte:0.##}";
+    }
 
-            if (minutes != 0)
-                s += $"{minutes}m ";
+    public static string FormatTime(TimeSpan time){
+        double milliseconds = time.Milliseconds;
+        double seconds = time.Seconds;
+        double minutes = time.Minutes;
 
-            if (seconds != 0)
-                s += $"{seconds}s ";
+        string s = "";
 
-            s += $"{milliseconds}ms";
+        if (minutes != 0)
+            s += $"{minutes}m ";
 
-            return s;
+        if (seconds != 0)
+            s += $"{seconds}s ";
+
+        s += $"{milliseconds}ms";
+
+        return s;
+    }
+
+    public static void GetSize(DirectoryInfo directory, ref long size){
+        foreach (DirectoryInfo childDirectory in directory.GetDirectories()){
+            GetSize(childDirectory, ref size);
         }
 
-        public static void GetSize(DirectoryInfo directory, ref long size){
-            foreach (DirectoryInfo childDirectory in directory.GetDirectories()){
-                GetSize(childDirectory, ref size);
-            }
-
-            foreach (FileInfo file in directory.GetFiles()){
-                size += file.Length;
-            }
+        foreach (FileInfo file in directory.GetFiles()){
+            size += file.Length;
         }
-
     }
 }

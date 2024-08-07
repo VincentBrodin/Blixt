@@ -68,7 +68,6 @@ namespace Blixt{
 
             layout["Right"].Update(tree);
 
-
             return layout;
         }
 
@@ -114,13 +113,17 @@ namespace Blixt{
             string[] options = new string[drives.Length];
             for (int i = 0; i < drives.Length; i++){
                 DriveInfo drive = drives[i];
+                try{
+                    long totalSize = drive.TotalSize;
+                    long freeSpace = drive.AvailableFreeSpace;
+                    long usedSpace = totalSize - freeSpace;
 
-                long totalSize = drive.TotalSize;
-                long freeSpace = drive.AvailableFreeSpace;
-                long usedSpace = totalSize - freeSpace;
-
-                string space = $"[grey]({Tools.FormatBytes(usedSpace)}/{Tools.FormatBytes(totalSize)})[/]";
-                options[i] = $"[grey]{drive.Name}[/] {drive.VolumeLabel} {space}";
+                    string space = $"[grey]({Tools.FormatBytes(usedSpace)}/{Tools.FormatBytes(totalSize)})[/]";
+                    options[i] = $"[grey]{drive.Name}[/] {drive.VolumeLabel} {space}";
+                }
+                catch (AccessViolationException exception){
+                    options[i] += $"[red]{drive.Name} ({exception.Message})[/]";
+                }
             }
 
             SelectionPrompt<string> prompt = new();
